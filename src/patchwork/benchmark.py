@@ -40,11 +40,10 @@ def evaluate(model, tokenizer, cases, *, max_new_tokens, thinking):
             enable_thinking=thinking,
         )
         inputs = tokenizer(formatted, return_tensors="pt", add_special_tokens=False).to(model.device)
+        generation.max_new_tokens = limit
         with torch.inference_mode():
             start = perf_counter()
-            generated = model.generate(
-                **inputs, generation_config=generation, max_new_tokens=limit,
-            )
+            generated = model.generate(**inputs, generation_config=generation)
             tokens = generated[0, inputs.input_ids.shape[1]:].tolist()
             seconds = perf_counter() - start
         token_count = len(tokens)
