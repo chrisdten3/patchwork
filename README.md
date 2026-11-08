@@ -33,13 +33,13 @@ The first model download and each saved checkpoint require a few GB of disk spac
    patchwork download
    patchwork patch \
      --claude-model MODEL_ID \
-     --prompt "Reduce repetitive reasoning loops on short arithmetic problems." \
+     --prompt "Improve accuracy on short arithmetic questions." \
      --eval examples/math-smoke.json \
-     --thinking --max-new-tokens 256 \
+     --max-new-tokens 16 \
      --output runs/math
    ```
 
-   The eval file is a JSON array of objects with `prompt` and `answer` strings. Include both target and regression cases. The bundled set is a small smoke test. Use an independent held-out set for meaningful comparisons and ask for short final answers that can be scored by exact match.
+   The eval file is a JSON array of objects with `prompt` and `answer` strings. Include both target and regression cases. The bundled set is a small smoke test. Use an independent held-out set for meaningful comparisons and ask for short final answers that can be scored by exact match. To investigate reasoning loops, add `--thinking` and raise the token limit. Longer generations can take substantially more time on CPU.
 
 Claude receives the goal, checkpoint revision, tensor names and shapes, and up to six requested summaries of local weight slices. Evaluation prompts and outputs stay local. Claude can propose column scaling or removing the direction of a reference column from a contiguous set of columns. Patchwork validates the proposed edits and caps the number of touched parameters. The workflow uses direct edits without gradients or training.
 
